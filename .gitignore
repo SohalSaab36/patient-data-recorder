@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+.env
+patient_case.db
+uploads/documents/*
+!uploads/documents/.gitkeep

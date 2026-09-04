@@ -67,7 +67,7 @@ New interview tables sit **beside** existing `users`, `patients`, `medical_cases
 
 - HTML, CSS, JavaScript, Bootstrap 5  
 - Python, Flask, Flask-Login, Flask-SQLAlchemy  
-- MySQL via PyMySQL  
+- SQLite for local development, or MySQL via PyMySQL  
 - ReportLab PDFs  
 - Optional: Pillow, pytesseract, pdf2image  
 
@@ -95,7 +95,10 @@ pip install -r requirements.txt
 copy .env.example .env
 ```
 
-Edit `.env` with your MySQL password and a strong `SECRET_KEY`.
+The app uses a local `patient_case.db` SQLite file by default, so no database
+server is required for local development. Set `DATABASE_URL` for another
+SQLAlchemy-supported database, or set `USE_MYSQL=true` and edit the MySQL
+settings in `.env`. Always use a strong `SECRET_KEY` outside a demo.
 
 Create the database:
 
@@ -109,6 +112,8 @@ Or: `CREATE DATABASE patient_case_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unico
 
 | Variable | Purpose |
 | --- | --- |
+| `DATABASE_URL` | Optional SQLAlchemy database URL; defaults to local SQLite |
+| `USE_MYSQL` | Set to `true` to use the `MYSQL_*` settings instead of SQLite |
 | `MYSQL_*` | Database connection |
 | `SECRET_KEY` | Session signing |
 | `TESSERACT_CMD` | Full path to `tesseract.exe` if not on PATH |

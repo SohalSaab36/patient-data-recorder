@@ -10,6 +10,7 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "change-this-secret-key-in-production")
 
+    DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
     MYSQL_USER = os.getenv("MYSQL_USER", "root")
     MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "")
     MYSQL_HOST = os.getenv("MYSQL_HOST", "localhost")
@@ -17,10 +18,14 @@ class Config:
     MYSQL_DATABASE = os.getenv("MYSQL_DATABASE", "patient_case_db")
 
     _password = quote_plus(MYSQL_PASSWORD)
-    SQLALCHEMY_DATABASE_URI = (
-        f"mysql+pymysql://{MYSQL_USER}:{_password}"
-        f"@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}"
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL or (
+        f"sqlite:///{os.path.join(BASE_DIR, 'patient_case.db')}"
     )
+    if not DATABASE_URL and os.getenv("USE_MYSQL", "").lower() in {"1", "true", "yes"}:
+        SQLALCHEMY_DATABASE_URI = (
+            f"mysql+pymysql://{MYSQL_USER}:{_password}"
+            f"@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}"
+        )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_pre_ping": True,

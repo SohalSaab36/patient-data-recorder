@@ -103,8 +103,8 @@ def create_app():
             upgrade_schema()
             _seed_accounts()
         except OperationalError as exc:
-            print("\nCould not connect to MySQL.")
-            print("Create the database and check your .env settings. See README.md.")
+            print("\nCould not connect to the configured database.")
+            print("Check DATABASE_URL or the MySQL settings in .env. See README.md.")
             print(f"Details: {exc}\n")
 
     return app
