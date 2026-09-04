@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}ABHA sandbox{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>ABDM / ABHA sandbox</h1>
+        <p class="badge text-bg-warning">Demo / Prototype Integration — not connected to real government APIs.</p>
+    </div>
+</div>
+<div class="card panel mb-3">
+    <div class="card-body">
+        <form method="post" class="row g-2">
+            <div class="col-md-8">
+                <input class="form-control" name="abha_id" placeholder="Mock ABHA number" value="{{ patient.abha_id or '' }}">
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary w-100" name="action" value="verify" type="submit">Sandbox verify</button>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-outline-primary w-100" name="action" value="link" type="submit">Simulate record link</button>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-outline-secondary w-100" name="action" value="fhir" type="submit">Generate FHIR-like JSON</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% if result %}
+<div class="alert alert-info">{{ result.banner if result.banner else '' }}<div>{{ result.message if result.message else result }}</div></div>
+{% endif %}
+{% if bundle %}
+<pre class="fhir-json">{{ bundle | tojson(indent=2) }}</pre>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}{{ patient.full_name }} | MediKiosk{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>{{ patient.full_name }}</h1>
+        <p><span class="badge-id">{{ patient.patient_id }}</span>
+            {% if patient.preferred_language %} · {{ patient.preferred_language|upper }}{% endif %}
+            {% if patient.abha_id %} · ABHA demo {{ patient.abha_id }}{% endif %}
+        </p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a class="btn btn-outline-secondary" href="{{ url_for('patients.edit_patient', patient_id=patient.id) }}"><i class="bi bi-pencil"></i> Edit</a>
+        <a class="btn btn-outline-primary" href="{{ url_for('cases.new_case', patient_id=patient.id) }}"><i class="bi bi-journal-plus"></i> Classic case sheet</a>
+    </div>
+</div>
+
+<div class="row g-4 doctor-workspace">
+    <div class="col-xl-3">
+        <div class="card panel mb-3">
+            <div class="card-body">
+                <h2 class="h6">Patient details</h2>
+                <dl class="detail-list">
+                    <dt>Age / gender</dt><dd>{{ patient.age }} years / {{ patient.gender }}</dd>
+                    <dt>Phone</dt><dd>{{ patient.phone }}</dd>
+                    <dt>Address</dt><dd>{{ patient.address }}</dd>
+                    <dt>Emergency</dt><dd>{{ patient.emergency_contact_name or '—' }} {{ patient.emergency_contact_phone or '' }}</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="card panel mb-3">
+            <div class="card-body">
+                <h2 class="h6">Filter timeline</h2>
+                <div class="d-flex flex-wrap gap-1">
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('patients.detail', patient_id=patient.id) }}">All</a>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('patients.detail', patient_id=patient.id, type='Prescription') }}">Prescriptions</a>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('patients.detail', patient_id=patient.id, type='Laboratory Report') }}">Labs</a>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('patients.detail', patient_id=patient.id, type='Discharge Summary') }}">Discharge</a>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('patients.detail', patient_id=patient.id, type='case') }}">Cases</a>
+                </div>
+                <ul class="timeline mt-3">
+                    {% for ev in timeline %}
+                    <li>
+                        <strong>{{ ev.event_date }}</strong>
+                        <span>{{ ev.event_type }} · {{ ev.title }}</span>
+                        {% if ev.document_id %}
+                        <a href="{{ url_for('documents.review', document_id=ev.document_id) }}">Document</a>
+                        {% endif %}
+                        {% if ev.session and ev.session.summary %}
+                        <a href="{{ url_for('clinical.review_summary', summary_id=ev.session.summary.id) }}">Summary</a>
+                        {% endif %}
+                        {% if ev.case_id %}
+                        <a href="{{ url_for('cases.view_case', case_id=ev.case_id) }}">Case sheet</a>
+                        {% endif %}
+                    </li>
+                    {% else %}
+                    <li class="text-muted">No timeline events.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="card panel">
+            <div class="card-body">
+                <h2 class="h6">Uploaded documents</h2>
+                <form class="mb-3" method="post" action="{{ url_for('documents.staff_upload', patient_id=patient.id) }}" enctype="multipart/form-data">
+                    <input class="form-control form-control-sm mb-2" type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
+                    <select class="form-select form-select-sm mb-2" name="category">
+                        <option>Prescription</option>
+                        <option>Laboratory Report</option>
+                        <option>Discharge Summary</option>
+                        <option>Medical Image/Other</option>
+                    </select>
+                    <button class="btn btn-sm btn-primary w-100" type="submit">Upload</button>
+                </form>
+                {% for d in documents %}
+                <div class="mb-2"><a href="{{ url_for('documents.review', document_id=d.id) }}">{{ d.original_filename }}</a>
+                    <span class="status-badge">{{ d.status.replace('_',' ') }}</span></div>
+                {% else %}
+                <p class="text-muted small mb-0">No documents.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card panel mb-3">
+            <div class="card-body">
+                <h2 class="h5">Structured clinical summary</h2>
+                {% if latest_summary %}
+                <p class="text-muted">Latest: {{ latest_summary.session.session_number }} · {{ latest_summary.status }} · {{ latest_summary.generator_mode }}</p>
+                <p><strong>Chief complaint.</strong> {{ latest_summary.chief_complaint }}</p>
+                <p><strong>HPI.</strong> {{ latest_summary.hpi }}</p>
+                <a class="btn btn-primary" href="{{ url_for('clinical.review_summary', summary_id=latest_summary.id) }}">Edit / confirm</a>
+                {% else %}
+                <p class="text-muted mb-0">No interview summary yet. Patients complete a guided kiosk interview from their portal.</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card panel mb-3">
+            <div class="card-body">
+                <h2 class="h6">Interview sessions</h2>
+                {% for s in sessions %}
+                <div class="d-flex justify-content-between border-bottom py-2">
+                    <div>{{ s.session_number }} · {{ s.status }}{% if s.is_priority %} · PRIORITY{% endif %}</div>
+                    {% if s.summary %}<a href="{{ url_for('clinical.review_summary', summary_id=s.summary.id) }}">Open</a>{% endif %}
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">No kiosk interviews.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card panel">
+            <div class="card-body">
+                <h2 class="h6">Classic case sheets</h2>
+                {% if cases %}
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Case</th><th>Complaint</th><th></th></tr></thead>
+                        <tbody>
+                        {% for c in cases %}
+                        <tr>
+                            <td>{{ c.case_number }}</td>
+                            <td>{{ c.main_symptoms[:80] }}</td>
+                            <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('cases.view_case', case_id=c.id) }}">Open</a></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">None yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3">
+        <div class="card panel mb-3">
+            <div class="card-body">
+                <h2 class="h6">Alerts</h2>
+                {% for a in alerts %}
+                <div class="alert alert-warning py-2">{{ a.matched_phrase }}<div class="small">{{ a.message }}</div></div>
+                {% else %}
+                <p class="text-muted small">No red-flag phrase matches. This does not exclude emergencies.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card panel">
+            <div class="card-body">
+                <h2 class="h6">Extracted lab values</h2>
+                <p class="small text-muted">Automated extraction/flagging for review. Clinical interpretation must be performed by a qualified healthcare professional.</p>
+                {% for lab in labs %}
+                <div class="mb-2">
+                    <strong>{{ lab.test_name }}</strong> {{ lab.value }} {{ lab.unit or '' }}
+                    <span class="flag-{{ lab.flag }}">{{ lab.flag.replace('_',' ') }}</span>
+                </div>
+                {% else %}
+                <p class="text-muted small mb-0">No extracted labs.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

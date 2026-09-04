@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Documents{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Upload medical documents</h1>
+        <p>PDF, JPG, JPEG, PNG. OCR runs locally when Tesseract is installed; otherwise the file is stored for manual review.</p>
+    </div>
+</div>
+<div class="card panel mb-4">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" class="drop-zone" id="uploadForm">
+            <input class="form-control mb-2" type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
+            <select class="form-select mb-2" name="category">
+                {% for value, label in categories %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary" type="submit">Upload and process</button>
+        </form>
+    </div>
+</div>
+{% for d in documents %}
+<div class="card panel mb-2">
+    <div class="card-body d-flex justify-content-between">
+        <div>
+            <strong>{{ d.original_filename }}</strong>
+            <div class="text-muted">{{ d.category }} · {{ d.status.replace('_',' ') }}</div>
+        </div>
+        <a class="btn btn-outline-primary" href="{{ url_for('documents.review', document_id=d.id) }}">Open</a>
+    </div>
+</div>
+{% else %}
+<p>No documents uploaded.</p>
+{% endfor %}
+{% endblock %}

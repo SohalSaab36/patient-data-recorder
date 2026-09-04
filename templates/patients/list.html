@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Patients | MediCase{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Patients</h1>
+        <p>Search, view, and manage registered patients.</p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('patients.add_patient') }}">
+        <i class="bi bi-person-plus"></i> Add patient
+    </a>
+</div>
+
+<div class="card panel mb-4">
+    <div class="card-body">
+        <form class="row g-2" method="get">
+            <div class="col-md-9">
+                <input class="form-control" type="search" name="q" value="{{ search_query }}" placeholder="Search by name, patient ID, or phone">
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card panel">
+    <div class="card-body">
+        {% if patients %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Patient ID</th>
+                        <th>Full name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Phone</th>
+                        <th>Registered</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in patients %}
+                    <tr>
+                        <td><span class="badge-id">{{ p.patient_id }}</span></td>
+                        <td>{{ p.full_name }}</td>
+                        <td>{{ p.age }}</td>
+                        <td>{{ p.gender }}</td>
+                        <td>{{ p.phone }}</td>
+                        <td>{{ p.created_at.strftime('%d %b %Y') if p.created_at else '—' }}</td>
+                        <td class="text-end text-nowrap">
+                            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('patients.detail', patient_id=p.id) }}">View</a>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('patients.edit_patient', patient_id=p.id) }}">Edit</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">No patients found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

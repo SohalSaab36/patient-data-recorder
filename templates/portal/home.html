@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}My health kiosk{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Hello, {{ patient.full_name }}</h1>
+        <p>ID {{ patient.patient_id }} · Choose a large button to continue. This kiosk does not diagnose.</p>
+    </div>
+</div>
+<div class="row g-3 kiosk-grid">
+    <div class="col-md-6 col-xl-4">
+        <form method="post" action="{{ url_for('portal.start_interview') }}">
+            <button class="kiosk-card" type="submit">
+                <i class="bi bi-chat-heart"></i>
+                <strong>Start new health interview</strong>
+                <span>One question at a time</span>
+            </button>
+        </form>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a class="kiosk-card" href="{{ url_for('documents.portal_documents') }}">
+            <i class="bi bi-cloud-arrow-up"></i>
+            <strong>Upload medical documents</strong>
+            <span>PDF or photo of reports</span>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a class="kiosk-card" href="{{ url_for('portal.timeline') }}">
+            <i class="bi bi-clock-history"></i>
+            <strong>Medical timeline</strong>
+            <span>Events in date order</span>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a class="kiosk-card" href="{{ url_for('portal.summaries') }}">
+            <i class="bi bi-file-earmark-text"></i>
+            <strong>Previous case summaries</strong>
+            <span>Doctor review status</span>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a class="kiosk-card" href="{{ url_for('portal.consent') }}">
+            <i class="bi bi-shield-check"></i>
+            <strong>Consent settings</strong>
+            <span>Choose what we may process</span>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <a class="kiosk-card" href="{{ url_for('portal.ayush') }}">
+            <i class="bi bi-flower1"></i>
+            <strong>AYUSH assessment</strong>
+            <span>Optional Ayurvedic history</span>
+        </a>
+    </div>
+</div>
+{% endblock %}

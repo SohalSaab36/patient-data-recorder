@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Document {{ doc.original_filename }}{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>{{ doc.original_filename }}</h1>
+        <p>{{ doc.category }} · Status: {{ doc.status.replace('_',' ') }} · {{ doc.ocr_message or '' }}</p>
+    </div>
+    <a class="btn btn-outline-primary" href="{{ url_for('documents.file_download', document_id=doc.id) }}">Open original file</a>
+</div>
+<p class="small text-muted">Rule-based extraction for demo only. Correct any errors below. Automated extraction/flagging for review. Clinical interpretation must be performed by a qualified healthcare professional.</p>
+<form method="post" action="{{ url_for('documents.save_ocr', document_id=doc.id) }}">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Facility / doctor (extracted)</label>
+            <input class="form-control" name="facility_name" value="{{ doc.facility_name or '' }}">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Document date</label>
+            <input class="form-control" type="date" name="document_date" value="{{ doc.document_date.isoformat() if doc.document_date else '' }}">
+        </div>
+        <div class="col-12">
+            <label class="form-label">OCR / manual text</label>
+            <textarea class="form-control" name="ocr_text" rows="10">{{ doc.ocr_text or '' }}</textarea>
+        </div>
+        {% for ex in doc.extractions %}
+        <div class="col-md-6">
+            <label class="form-label">{{ ex.field_name }}</label>
+            <input class="form-control" name="ex_{{ ex.id }}" value="{{ ex.field_value }}">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="rev_{{ ex.id }}" {% if ex.needs_review %}checked{% endif %}>
+                <label class="form-check-label">Needs manual review</label>
+            </div>
+        </div>
+        {% endfor %}
+        {% for lab in labs %}
+        <div class="col-12 border rounded p-2">
+            <strong>{{ lab.test_name }}</strong>
+            <div class="row g-2 mt-1">
+                <div class="col-md-3"><input class="form-control" name="lab_value_{{ lab.id }}" value="{{ lab.value or '' }}"></div>
+                <div class="col-md-3"><input class="form-control" name="lab_unit_{{ lab.id }}" value="{{ lab.unit or '' }}"></div>
+                <div class="col-md-4">
+                    <select class="form-select" name="lab_flag_{{ lab.id }}">
+                        {% for f in ['within_range','potentially_low','potentially_high','needs_manual_review'] %}
+                        <option value="{{ f }}" {% if lab.flag == f %}selected{% endif %}>{{ f.replace('_',' ') }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% if meds %}
+        <div class="col-12">
+            <h2 class="h6">Medications extracted</h2>
+            <ul>{% for m in meds %}<li>{{ m.name }} {{ m.dosage or '' }}</li>{% endfor %}</ul>
+        </div>
+        {% endif %}
+    </div>
+    <button class="btn btn-primary mt-3" type="submit">Save corrections</button>
+</form>
+{% endblock %}

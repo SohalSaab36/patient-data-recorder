@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}AYUSH assessment{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>AYUSH / Ayurvedic assessment</h1>
+        <p>Optional and stored separately from allopathic interview history. Educational prototype fields only.</p>
+    </div>
+</div>
+<div class="card panel mb-4">
+    <div class="card-body">
+        <form method="post">
+            <div class="row g-3">
+                {% set fields = [
+                    ('prakriti','Prakriti'),('vikriti','Vikriti'),('agni','Agni'),('koshta','Koshta'),
+                    ('sara','Sara'),('samhanana','Samhanana'),('pramana','Pramana'),('satmya','Satmya'),
+                    ('sattva','Sattva'),('ahara_shakti','Ahara Shakti'),('vyayama_shakti','Vyayama Shakti'),('vaya','Vaya')
+                ] %}
+                {% for name, label in fields %}
+                <div class="col-md-6">
+                    <label class="form-label">{{ label }}</label>
+                    <select class="form-select" name="{{ name }}">
+                        <option value="">Not sure</option>
+                        <option>Vata</option><option>Pitta</option><option>Kapha</option>
+                        <option>Vata-Pitta</option><option>Pitta-Kapha</option><option>Vata-Kapha</option>
+                        <option>Low</option><option>Medium</option><option>High</option>
+                        <option>Childhood</option><option>Middle age</option><option>Elderly</option>
+                    </select>
+                </div>
+                {% endfor %}
+                <div class="col-12">
+                    <label class="form-label">Ahara (diet)</label>
+                    <textarea class="form-control" name="ahara" rows="2"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Vihara (lifestyle)</label>
+                    <textarea class="form-control" name="vihara" rows="2"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Nidana factors</label>
+                    <textarea class="form-control" name="nidana" rows="2"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Notes / Dashavidha Pariksha comments</label>
+                    <textarea class="form-control" name="notes" rows="2"></textarea>
+                </div>
+            </div>
+            <button class="btn btn-primary mt-3" type="submit">Save AYUSH assessment</button>
+        </form>
+    </div>
+</div>
+{% for item in items %}
+<div class="card panel mb-2">
+    <div class="card-body">
+        <strong>{{ item.created_at }}</strong>
+        <div>Prakriti {{ item.prakriti or '—' }} · Vikriti {{ item.vikriti or '—' }} · Agni {{ item.agni or '—' }}</div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

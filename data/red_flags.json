@@ -1,0 +1,30 @@
+{
+  "disclaimer": "Demo red-flag phrases only. This is not a diagnosis or emergency dispatch system.",
+  "flags": [
+    {
+      "id": "chest_acute",
+      "phrases": ["chest pain", "pressure in chest", "pain spreading to arm", "arm, neck or jaw", "in the last few minutes"],
+      "message": "Chest symptoms that started suddenly may need urgent in-person assessment. This is not a diagnosis."
+    },
+    {
+      "id": "neuro_sudden",
+      "phrases": ["worst headache", "sudden or worst ever", "worst ever", "cannot speak", "one sided weakness", "fainted"],
+      "message": "Sudden severe headache or stroke-like symptoms may need urgent assessment. This is not a diagnosis."
+    },
+    {
+      "id": "bleed",
+      "phrases": ["blood in sputum", "coughing blood", "blood in vomit", "vomiting blood", "blood in stool", "black stool"],
+      "message": "Reported bleeding should be reviewed promptly by a clinician. This is not a diagnosis."
+    },
+    {
+      "id": "breathless",
+      "phrases": ["cannot breathe", "struggling to breathe", "lips blue", "severe breathlessness"],
+      "message": "Severe breathing difficulty may need urgent care. This is not a diagnosis."
+    },
+    {
+      "id": "suicide",
+      "phrases": ["want to die", "kill myself", "suicide"],
+      "message": "If you are in crisis, contact local emergency services or a trusted person immediately. This tool cannot provide emergency care."
+    }
+  ]
+}

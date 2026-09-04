@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | MediKiosk{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Clinician dashboard</h1>
+        <p>Pending interviews, priority phrases, documents, and classic case sheets.</p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('patients.add_patient') }}">
+        <i class="bi bi-person-plus"></i> Add patient
+    </a>
+</div>
+
+{% if search_query %}
+<div class="card panel mb-4">
+    <div class="card-body">
+        <h2 class="h5 mb-3">Search results for “{{ search_query }}”</h2>
+        {% if search_results %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Patient ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Phone</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in search_results %}
+                    <tr>
+                        <td><span class="badge-id">{{ p.patient_id }}</span></td>
+                        <td>{{ p.full_name }}</td>
+                        <td>{{ p.age }} / {{ p.gender }}</td>
+                        <td>{{ p.phone }}</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('patients.detail', patient_id=p.id) }}">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">No patients matched that search.</p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+            <div><span>Total patients</span><strong>{{ total_patients }}</strong></div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card teal">
+            <div class="stat-icon"><i class="bi bi-chat-dots"></i></div>
+            <div><span>Pending interviews</span><strong>{{ pending_interviews }}</strong></div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card gold">
+            <div class="stat-icon"><i class="bi bi-exclamation-triangle"></i></div>
+            <div><span>Priority / red-flag</span><strong>{{ priority_cases }}</strong></div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card navy">
+            <div class="stat-icon"><i class="bi bi-journal-medical"></i></div>
+            <div><span>Classic case sheets</span><strong>{{ total_cases }}</strong></div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card panel h-100">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Priority notices</h2>
+                {% if open_alerts %}
+                <ul class="list-plain">
+                    {% for a in open_alerts %}
+                    <li>
+                        <div>
+                            <strong>{{ a.patient.full_name if a.patient else 'Patient' }}</strong>
+                            <span>{{ a.matched_phrase }} · {{ a.message[:90] }}…</span>
+                        </div>
+                        <form method="post" action="{{ url_for('clinical.ack_alert', alert_id=a.id) }}">
+                            <button class="btn btn-sm btn-light" type="submit">Ack</button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted mb-0">No unacknowledged phrase matches.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card panel h-100">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Recently completed histories</h2>
+                {% if recent_sessions %}
+                <ul class="list-plain">
+                    {% for s in recent_sessions %}
+                    <li>
+                        <div>
+                            <strong>{{ s.session_number }}</strong>
+                            <span>{{ s.patient.full_name }} · {{ s.status }}{% if s.is_priority %} · PRIORITY{% endif %}</span>
+                        </div>
+                        {% if s.summary %}
+                        <a class="btn btn-sm btn-light" href="{{ url_for('clinical.review_summary', summary_id=s.summary.id) }}">Review</a>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted mb-0">No completed interviews yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card panel h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">Recent patients</h2>
+                    <a href="{{ url_for('patients.list_patients') }}">View all</a>
+                </div>
+                {% if recent_patients %}
+                <ul class="list-plain">
+                    {% for p in recent_patients %}
+                    <li>
+                        <div>
+                            <strong>{{ p.full_name }}</strong>
+                            <span>{{ p.patient_id }} · {{ p.age }} yrs</span>
+                        </div>
+                        <a class="btn btn-sm btn-light" href="{{ url_for('patients.detail', patient_id=p.id) }}">Open</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted mb-0">No patients yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card panel h-100">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Recent document uploads</h2>
+                {% if recent_docs %}
+                <ul class="list-plain">
+                    {% for d in recent_docs %}
+                    <li>
+                        <div>
+                            <strong>{{ d.original_filename }}</strong>
+                            <span>{{ d.patient.full_name }} · {{ d.status.replace('_',' ') }}</span>
+                        </div>
+                        <a class="btn btn-sm btn-light" href="{{ url_for('documents.review', document_id=d.id) }}">Open</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted mb-0">No uploads yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card panel">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Classic case sheets</h2>
+                {% if recent_cases %}
+                <ul class="list-plain">
+                    {% for c in recent_cases %}
+                    <li>
+                        <div>
+                            <strong>{{ c.case_number }}</strong>
+                            <span>{{ c.patient.full_name }} · {{ c.created_at.strftime('%d %b %Y') if c.created_at else '' }}</span>
+                        </div>
+                        <a class="btn btn-sm btn-light" href="{{ url_for('cases.view_case', case_id=c.id) }}">View</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted mb-0">No classic case sheets yet. They remain available from each patient record.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

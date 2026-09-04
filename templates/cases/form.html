@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}{% if case %}Edit case sheet{% else %}Digital case-taking{% endif %} | MediCase{% endblock %}
+{% block content %}
+{% if form %}
+    {% set v = {
+        'main_symptoms': form.get('main_symptoms', ''),
+        'duration': form.get('duration', ''),
+        'severity': form.get('severity', ''),
+        'present_illness_description': form.get('present_illness_description', ''),
+        'symptoms_started': form.get('symptoms_started', ''),
+        'progression': form.get('progression', ''),
+        'previous_diseases': form.get('previous_diseases', ''),
+        'previous_surgeries': form.get('previous_surgeries', ''),
+        'hospitalizations': form.get('hospitalizations', ''),
+        'current_medications': form.get('current_medications', ''),
+        'allergies': form.get('allergies', ''),
+        'family_history': form.get('family_history', ''),
+        'diet': form.get('diet', ''),
+        'sleep': form.get('sleep', ''),
+        'lifestyle': form.get('lifestyle', '')
+    } %}
+{% elif case %}
+    {% set v = {
+        'main_symptoms': case.main_symptoms,
+        'duration': case.duration,
+        'severity': case.severity,
+        'present_illness_description': case.present_illness_description,
+        'symptoms_started': case.symptoms_started,
+        'progression': case.progression,
+        'previous_diseases': case.history.previous_diseases if case.history else '',
+        'previous_surgeries': case.history.previous_surgeries if case.history else '',
+        'hospitalizations': case.history.hospitalizations if case.history else '',
+        'current_medications': case.history.current_medications if case.history else '',
+        'allergies': case.history.allergies if case.history else '',
+        'family_history': case.family_history,
+        'diet': case.diet,
+        'sleep': case.sleep,
+        'lifestyle': case.lifestyle
+    } %}
+{% else %}
+    {% set v = {
+        'main_symptoms': '', 'duration': '', 'severity': '',
+        'present_illness_description': '', 'symptoms_started': '', 'progression': '',
+        'previous_diseases': '', 'previous_surgeries': '', 'hospitalizations': '',
+        'current_medications': '', 'allergies': '', 'family_history': '',
+        'diet': '', 'sleep': '', 'lifestyle': ''
+    } %}
+{% endif %}
+
+<div class="page-head">
+    <div>
+        <h1>{% if case %}Edit case sheet{% else %}Digital case-taking{% endif %}</h1>
+        <p>Patient: <strong>{{ patient.full_name }}</strong> &middot; {{ patient.patient_id }}</p>
+    </div>
+</div>
+
+<div class="card panel">
+    <div class="card-body">
+        <ol class="wizard-steps" id="wizardSteps">
+            <li class="active" data-step="1">Chief complaints</li>
+            <li data-step="2">Present illness</li>
+            <li data-step="3">Past history</li>
+            <li data-step="4">Family history</li>
+            <li data-step="5">Personal history</li>
+        </ol>
+
+        <form method="post" id="caseForm" novalidate>
+            <section class="wizard-pane active" data-pane="1">
+                <h2 class="h5">Step 1 — Chief complaints</h2>
+                <div class="mb-3">
+                    <label class="form-label" for="main_symptoms">Main symptoms</label>
+                    <textarea class="form-control" id="main_symptoms" name="main_symptoms" rows="4" required>{{ v.main_symptoms }}</textarea>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="duration">Duration of symptoms</label>
+                        <input class="form-control" id="duration" name="duration" required placeholder="e.g. 3 days, 2 weeks" value="{{ v.duration }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="severity">Severity</label>
+                        <select class="form-select" id="severity" name="severity" required>
+                            <option value="">Select</option>
+                            <option value="Mild" {% if v.severity == 'Mild' %}selected{% endif %}>Mild</option>
+                            <option value="Moderate" {% if v.severity == 'Moderate' %}selected{% endif %}>Moderate</option>
+                            <option value="Severe" {% if v.severity == 'Severe' %}selected{% endif %}>Severe</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section class="wizard-pane" data-pane="2">
+                <h2 class="h5">Step 2 — History of present illness</h2>
+                <div class="mb-3">
+                    <label class="form-label" for="present_illness_description">Detailed description</label>
+                    <textarea class="form-control" id="present_illness_description" name="present_illness_description" rows="4" required>{{ v.present_illness_description }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="symptoms_started">When symptoms started</label>
+                    <input class="form-control" id="symptoms_started" name="symptoms_started" required value="{{ v.symptoms_started }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="progression">Progression of symptoms</label>
+                    <textarea class="form-control" id="progression" name="progression" rows="3" required>{{ v.progression }}</textarea>
+                </div>
+            </section>
+
+            <section class="wizard-pane" data-pane="3">
+                <h2 class="h5">Step 3 — Past medical history</h2>
+                <div class="mb-3">
+                    <label class="form-label" for="previous_diseases">Previous diseases</label>
+                    <textarea class="form-control" id="previous_diseases" name="previous_diseases" rows="2" required>{{ v.previous_diseases }}</textarea>
+                    <div class="form-text">Write “None” if not applicable.</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="previous_surgeries">Previous surgeries</label>
+                    <textarea class="form-control" id="previous_surgeries" name="previous_surgeries" rows="2" required>{{ v.previous_surgeries }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="hospitalizations">Hospitalizations</label>
+                    <textarea class="form-control" id="hospitalizations" name="hospitalizations" rows="2" required>{{ v.hospitalizations }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="current_medications">Current medications</label>
+                    <textarea class="form-control" id="current_medications" name="current_medications" rows="2" required>{{ v.current_medications }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="allergies">Allergies</label>
+                    <textarea class="form-control" id="allergies" name="allergies" rows="2" required>{{ v.allergies }}</textarea>
+                </div>
+            </section>
+
+            <section class="wizard-pane" data-pane="4">
+                <h2 class="h5">Step 4 — Family history</h2>
+                <div class="mb-3">
+                    <label class="form-label" for="family_history">Relevant family medical history</label>
+                    <textarea class="form-control" id="family_history" name="family_history" rows="6" required>{{ v.family_history }}</textarea>
+                </div>
+            </section>
+
+            <section class="wizard-pane" data-pane="5">
+                <h2 class="h5">Step 5 — Personal history</h2>
+                <div class="mb-3">
+                    <label class="form-label" for="diet">Diet</label>
+                    <textarea class="form-control" id="diet" name="diet" rows="3" required>{{ v.diet }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="sleep">Sleep</label>
+                    <textarea class="form-control" id="sleep" name="sleep" rows="3" required>{{ v.sleep }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="lifestyle">Lifestyle information</label>
+                    <textarea class="form-control" id="lifestyle" name="lifestyle" rows="3" required>{{ v.lifestyle }}</textarea>
+                </div>
+            </section>
+
+            <div class="wizard-nav">
+                <button class="btn btn-outline-secondary" type="button" id="prevStep" disabled>Back</button>
+                <button class="btn btn-primary" type="button" id="nextStep">Next</button>
+                <button class="btn btn-primary d-none" type="submit" id="submitCase">Save case sheet</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/case-form.js') }}"></script>
+{% endblock %}

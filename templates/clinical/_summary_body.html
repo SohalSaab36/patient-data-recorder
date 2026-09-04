@@ -1,0 +1,65 @@
+<div class="page-head no-print">
+    <div>
+        <h1>Patient summary</h1>
+        <p>{{ patient.full_name }} · {{ summary.session.session_number }} · Status: {{ summary.status }} · Generator: {{ summary.generator_mode }}</p>
+    </div>
+    {% if editable %}
+    <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-primary" type="button" onclick="window.print()">Print</button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('clinical.summary_pdf', summary_id=summary.id) }}">Export PDF</a>
+    </div>
+    {% endif %}
+</div>
+<p class="alert alert-secondary">This is a structured history for clinician review. It is not a diagnosis, treatment plan, or certified medical device output.</p>
+{% if editable %}
+<form method="post">
+    {% set fields = [
+        ('chief_complaint','Chief Complaint'),
+        ('hpi','History of Present Illness'),
+        ('past_medical','Past Medical History'),
+        ('past_surgical','Past Surgical History'),
+        ('drug_history','Drug & Medication History'),
+        ('allergy_history','Allergies'),
+        ('family_history','Family History'),
+        ('personal_history','Personal History'),
+        ('review_of_systems','Review of Systems'),
+        ('prior_investigations','Prior Investigations Summary'),
+        ('document_timeline','Document Timeline'),
+        ('red_flag_notes','Red Flags / Important Notes'),
+        ('important_notes','Disclaimer / notes')
+    ] %}
+    {% for name, label in fields %}
+    <div class="mb-3">
+        <label class="form-label">{{ label }}</label>
+        <textarea class="form-control" name="{{ name }}" rows="3">{{ attr(summary, name) or '' }}</textarea>
+    </div>
+    {% endfor %}
+    <div class="mb-3">
+        <label class="form-label">Send-back comment (if rejecting)</label>
+        <textarea class="form-control" name="doctor_feedback" rows="2">{{ summary.session.doctor_feedback or '' }}</textarea>
+    </div>
+    <div class="d-flex flex-wrap gap-2 no-print">
+        <button class="btn btn-outline-secondary" name="action" value="draft" type="submit">Save draft</button>
+        <button class="btn btn-primary" name="action" value="confirm" type="submit">Confirm</button>
+        <button class="btn btn-outline-danger" name="action" value="reject" type="submit">Reject / send back</button>
+    </div>
+</form>
+{% else %}
+<article class="case-sheet card panel">
+    <section><h3>Chief Complaint</h3><p>{{ summary.chief_complaint }}</p></section>
+    <section><h3>History of Present Illness</h3><p>{{ summary.hpi }}</p></section>
+    <section><h3>Past Medical History</h3><p>{{ summary.past_medical }}</p></section>
+    <section><h3>Past Surgical History</h3><p>{{ summary.past_surgical }}</p></section>
+    <section><h3>Drug &amp; Medication History</h3><p>{{ summary.drug_history }}</p></section>
+    <section><h3>Allergies</h3><p>{{ summary.allergy_history }}</p></section>
+    <section><h3>Family History</h3><p>{{ summary.family_history }}</p></section>
+    <section><h3>Personal History</h3><p>{{ summary.personal_history }}</p></section>
+    <section><h3>Review of Systems</h3><p>{{ summary.review_of_systems }}</p></section>
+    <section><h3>Prior Investigations</h3><p>{{ summary.prior_investigations }}</p></section>
+    <section><h3>Document Timeline</h3><p>{{ summary.document_timeline }}</p></section>
+    <section><h3>Red Flags / Notes</h3><p>{{ summary.red_flag_notes }}</p></section>
+    {% if summary.session.doctor_feedback %}
+    <section><h3>Doctor feedback</h3><p>{{ summary.session.doctor_feedback }}</p></section>
+    {% endif %}
+</article>
+{% endif %}

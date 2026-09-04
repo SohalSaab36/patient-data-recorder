@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Consent{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Consent centre</h1>
+        <p>Designed with consent-first and privacy-aware principles inspired by DPDP Act 2023 and ABDM workflows. This prototype is not a legal compliance certification.</p>
+    </div>
+</div>
+<div class="card panel">
+    <div class="card-body">
+        <form method="post">
+            {% for c in consents %}
+            <div class="consent-row">
+                <div>
+                    <strong>{{ c.title }}</strong>
+                    <p>{{ c.help }}</p>
+                    {% if c.timestamp %}<span class="small text-muted">Last change: {{ c.timestamp }}</span>{% endif %}
+                    {% if c.withdrawn_at %}<span class="small">Withdrawn {{ c.withdrawn_at }}</span>{% endif %}
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" name="{{ c.key }}" {% if c.granted %}checked{% endif %}>
+                    <label class="form-check-label">Granted</label>
+                </div>
+            </div>
+            {% endfor %}
+            <button class="btn btn-primary mt-3" type="submit">Save consent choices</button>
+        </form>
+        <p class="small text-muted mt-3 mb-0">If you withdraw document processing, new uploads and OCR will stop. Existing files already stored remain, with an audit record of the withdrawal.</p>
+    </div>
+</div>
+{% endblock %}

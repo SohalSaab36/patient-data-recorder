@@ -1,0 +1,385 @@
+{
+  "start": "q_category",
+  "estimated_steps": 18,
+  "questions": {
+    "q_category": {
+      "section": "chief_complaint",
+      "type": "choice",
+      "text": {
+        "en": "What is the main problem you want to talk about today?",
+        "hi": "आज आप मुख्य रूप से किस समस्या के बारे में बात करना चाहते हैं?"
+      },
+      "simple": {
+        "en": "Tap the button that matches your problem.",
+        "hi": "अपनी समस्या वाला बटन दबाएँ।"
+      },
+      "choices": [
+        {"value": "pain", "label": {"en": "Pain", "hi": "दर्द"}},
+        {"value": "respiratory", "label": {"en": "Breathing / cough", "hi": "साँस / खाँसी"}},
+        {"value": "digestive", "label": {"en": "Stomach / digestion", "hi": "पेट / पाचन"}},
+        {"value": "headache", "label": {"en": "Headache", "hi": "सिरदर्द"}},
+        {"value": "fever", "label": {"en": "Fever", "hi": "बुखार"}},
+        {"value": "general", "label": {"en": "Something else", "hi": "कुछ और"}}
+      ],
+      "next_map": {
+        "pain": "q_pain_where",
+        "respiratory": "q_resp_main",
+        "digestive": "q_gi_main",
+        "headache": "q_ha_when",
+        "fever": "q_fever_how_long",
+        "general": "q_general_describe"
+      }
+    },
+    "q_pain_where": {
+      "section": "chief_complaint",
+      "type": "choice",
+      "text": {
+        "en": "Where is the pain?",
+        "hi": "दर्द कहाँ है?"
+      },
+      "choices": [
+        {"value": "chest", "label": {"en": "Chest", "hi": "छाती"}},
+        {"value": "abdomen", "label": {"en": "Abdomen", "hi": "पेट"}},
+        {"value": "head", "label": {"en": "Head", "hi": "सिर"}},
+        {"value": "back", "label": {"en": "Back", "hi": "पीठ"}},
+        {"value": "joint", "label": {"en": "Joint / limb", "hi": "जोड़ / हाथ-पैर"}},
+        {"value": "other", "label": {"en": "Somewhere else", "hi": "कहीं और"}}
+      ],
+      "next_rules": [
+        {"if_equals": "chest", "goto": "q_chest_onset"},
+        {"else": "q_pain_onset"}
+      ]
+    },
+    "q_chest_onset": {
+      "section": "hpi",
+      "type": "choice",
+      "text": {
+        "en": "When did the chest pain start?",
+        "hi": "छाती का दर्द कब शुरू हुआ?"
+      },
+      "choices": [
+        {"value": "minutes", "label": {"en": "In the last few minutes", "hi": "पिछले कुछ मिनटों में"}},
+        {"value": "hours", "label": {"en": "Today / few hours", "hi": "आज / कुछ घंटे"}},
+        {"value": "days", "label": {"en": "A few days", "hi": "कुछ दिन"}},
+        {"value": "weeks", "label": {"en": "Weeks or longer", "hi": "हफ्तों से"}}
+      ],
+      "next": "q_chest_feel"
+    },
+    "q_chest_feel": {
+      "section": "hpi",
+      "type": "choice",
+      "text": {
+        "en": "What does the chest pain feel like?",
+        "hi": "छाती का दर्द कैसा लगता है?"
+      },
+      "choices": [
+        {"value": "pressure", "label": {"en": "Pressure / heaviness", "hi": "दबाव / भारीपन"}},
+        {"value": "sharp", "label": {"en": "Sharp / stabbing", "hi": "तेज़ / चुभन"}},
+        {"value": "burning", "label": {"en": "Burning", "hi": "जलन"}},
+        {"value": "tight", "label": {"en": "Tightness", "hi": "कसाव"}}
+      ],
+      "next": "q_chest_spread"
+    },
+    "q_chest_spread": {
+      "section": "hpi",
+      "type": "choice",
+      "text": {
+        "en": "Does the pain spread anywhere?",
+        "hi": "क्या दर्द कहीं फैलता है?"
+      },
+      "choices": [
+        {"value": "arm_jaw", "label": {"en": "Arm, neck or jaw", "hi": "बाँह, गर्दन या जबड़ा"}},
+        {"value": "back", "label": {"en": "Back", "hi": "पीठ"}},
+        {"value": "no", "label": {"en": "No, it stays in the chest", "hi": "नहीं, केवल छाती में"}}
+      ],
+      "next": "q_pain_severity"
+    },
+    "q_pain_onset": {
+      "section": "hpi",
+      "type": "text",
+      "text": {
+        "en": "When did the pain start?",
+        "hi": "दर्द कब शुरू हुआ?"
+      },
+      "next": "q_pain_feel"
+    },
+    "q_pain_feel": {
+      "section": "hpi",
+      "type": "choice",
+      "text": {
+        "en": "What does the pain feel like?",
+        "hi": "दर्द कैसा लगता है?"
+      },
+      "choices": [
+        {"value": "dull", "label": {"en": "Dull / aching", "hi": "हल्का / दर्द भरा"}},
+        {"value": "sharp", "label": {"en": "Sharp", "hi": "तेज़"}},
+        {"value": "burning", "label": {"en": "Burning", "hi": "जलन"}},
+        {"value": "cramp", "label": {"en": "Cramping", "hi": "मरोड़"}}
+      ],
+      "next": "q_pain_severity"
+    },
+    "q_pain_severity": {
+      "section": "hpi",
+      "type": "choice",
+      "text": {
+        "en": "How severe is the pain from 1 (mild) to 10 (worst)?",
+        "hi": "दर्द 1 (हल्का) से 10 (बहुत तेज़) तक कितना है?"
+      },
+      "choices": [
+        {"value": "1-3", "label": {"en": "1–3 mild", "hi": "1–3 हल्का"}},
+        {"value": "4-6", "label": {"en": "4–6 moderate", "hi": "4–6 मध्यम"}},
+        {"value": "7-8", "label": {"en": "7–8 severe", "hi": "7–8 तेज़"}},
+        {"value": "9-10", "label": {"en": "9–10 worst", "hi": "9–10 बहुत तेज़"}}
+      ],
+      "next": "q_pain_worse"
+    },
+    "q_pain_worse": {
+      "section": "hpi",
+      "type": "text",
+      "text": {
+        "en": "What makes the pain worse?",
+        "hi": "किससे दर्द बढ़ता है?"
+      },
+      "next": "q_pain_better"
+    },
+    "q_pain_better": {
+      "section": "hpi",
+      "type": "text",
+      "text": {
+        "en": "What makes the pain better?",
+        "hi": "किससे दर्द कम होता है?"
+      },
+      "next": "q_associated"
+    },
+    "q_resp_main": {
+      "section": "chief_complaint",
+      "type": "choice",
+      "text": {
+        "en": "What breathing problem is most troubling?",
+        "hi": "साँस की कौन सी समस्या सबसे ज़्यादा है?"
+      },
+      "choices": [
+        {"value": "cough", "label": {"en": "Cough", "hi": "खाँसी"}},
+        {"value": "shortness", "label": {"en": "Shortness of breath", "hi": "साँस फूलना"}},
+        {"value": "wheeze", "label": {"en": "Wheeze / whistling", "hi": "घरघराहट"}},
+        {"value": "both", "label": {"en": "Cough and breathlessness", "hi": "खाँसी और साँस फूलना"}}
+      ],
+      "next": "q_resp_duration"
+    },
+    "q_resp_duration": {
+      "section": "hpi",
+      "type": "text",
+      "text": {
+        "en": "How long have you had this breathing problem?",
+        "hi": "यह साँस की समस्या कितने समय से है?"
+      },
+      "next": "q_resp_sputum"
+    },
+    "q_resp_sputum": {
+      "section": "hpi",
+      "type": "choice",
+      "text": {
+        "en": "Are you coughing up sputum or blood?",
+        "hi": "क्या खाँसी के साथ कफ या खून आता है?"
+      },
+      "choices": [
+        {"value": "none", "label": {"en": "Dry cough / none", "hi": "सूखी खाँसी"}},
+        {"value": "sputum", "label": {"en": "Sputum / phlegm", "hi": "कफ"}},
+        {"value": "blood", "label": {"en": "Blood in sputum", "hi": "कफ में खून"}}
+      ],
+      "next": "q_associated"
+    },
+    "q_gi_main": {
+      "section": "chief_complaint",
+      "type": "choice",
+      "text": {
+        "en": "What stomach problem is most troubling?",
+        "hi": "पेट की कौन सी समस्या सबसे ज़्यादा है?"
+      },
+      "choices": [
+        {"value": "pain", "label": {"en": "Pain", "hi": "दर्द"}},
+        {"value": "nausea", "label": {"en": "Nausea / vomiting", "hi": "मतली / उल्टी"}},
+        {"value": "diarrhoea", "label": {"en": "Loose stools", "hi": "दस्त"}},
+        {"value": "constipation", "label": {"en": "Constipation", "hi": "कब्ज"}},
+        {"value": "burning", "label": {"en": "Acidity / burning", "hi": "अम्लता / जलन"}}
+      ],
+      "next": "q_gi_duration"
+    },
+    "q_gi_duration": {
+      "section": "hpi",
+      "type": "text",
+      "text": {
+        "en": "When did these stomach symptoms start?",
+        "hi": "पेट के लक्षण कब शुरू हुए?"
+      },
+      "next": "q_gi_blood"
+    },
+    "q_gi_blood": {
+      "section": "hpi",
+      "type": "choice",
+      "text": {
+        "en": "Have you noticed blood in vomit or stool?",
+        "hi": "क्या उल्टी या मल में खून दिखा है?"
+      },
+      "choices": [
+        {"value": "no", "label": {"en": "No", "hi": "नहीं"}},
+        {"value": "vomit", "label": {"en": "Blood in vomit", "hi": "उल्टी में खून"}},
+        {"value": "stool", "label": {"en": "Blood in stool", "hi": "मल में खून"}}
+      ],
+      "next": "q_associated"
+    },
+    "q_ha_when": {
+      "section": "hpi",
+      "type": "text",
+      "text": {
+        "en": "When did the headache start, and is it new or usual for you?",
+        "hi": "सिरदर्द कब शुरू हुआ? क्या यह नया है या अक्सर होता है?"
+      },
+      "next": "q_ha_worst"
+    },
+    "q_ha_worst": {
+      "section": "hpi",
+      "type": "choice",
+      "text": {
+        "en": "Is this the worst headache of your life, or did it start very suddenly?",
+        "hi": "क्या यह जीवन का सबसे तेज़ सिरदर्द है, या अचानक शुरू हुआ?"
+      },
+      "choices": [
+        {"value": "yes", "label": {"en": "Yes — sudden or worst ever", "hi": "हाँ — अचानक / सबसे तेज़"}},
+        {"value": "no", "label": {"en": "No, it is similar to before", "hi": "नहीं, पहले जैसा"}}
+      ],
+      "next": "q_associated"
+    },
+    "q_fever_how_long": {
+      "section": "hpi",
+      "type": "text",
+      "text": {
+        "en": "How many days have you had fever, and did you measure the temperature?",
+        "hi": "बुखार कितने दिनों से है? क्या तापमान मापा गया?"
+      },
+      "next": "q_fever_pattern"
+    },
+    "q_fever_pattern": {
+      "section": "hpi",
+      "type": "choice",
+      "text": {
+        "en": "Are there chills, rash, or difficulty drinking fluids?",
+        "hi": "क्या कंपकंपी, दाने, या पानी पीने में कठिनाई है?"
+      },
+      "choices": [
+        {"value": "chills", "label": {"en": "Chills / shivering", "hi": "कंपकंपी"}},
+        {"value": "rash", "label": {"en": "Rash", "hi": "दाने"}},
+        {"value": "poor_intake", "label": {"en": "Not able to drink well", "hi": "पानी नहीं पी पा रहे"}},
+        {"value": "none", "label": {"en": "None of these", "hi": "इनमें से कोई नहीं"}}
+      ],
+      "next": "q_associated"
+    },
+    "q_general_describe": {
+      "section": "chief_complaint",
+      "type": "text",
+      "text": {
+        "en": "Please describe your main symptoms in your own words.",
+        "hi": "कृपया अपनी मुख्य समस्या अपने शब्दों में बताएँ।"
+      },
+      "next": "q_general_duration"
+    },
+    "q_general_duration": {
+      "section": "hpi",
+      "type": "text",
+      "text": {
+        "en": "When did these symptoms start, and are they getting better, worse, or the same?",
+        "hi": "ये लक्षण कब शुरू हुए? क्या ये बेहतर, बदतर, या वैसे ही हैं?"
+      },
+      "next": "q_associated"
+    },
+    "q_associated": {
+      "section": "hpi",
+      "type": "text",
+      "text": {
+        "en": "Any other associated symptoms (for example nausea, sweating, dizziness, swelling)?",
+        "hi": "क्या और लक्षण हैं (जैसे मतली, पसीना, चक्कर, सूजन)?"
+      },
+      "next": "q_past_medical"
+    },
+    "q_past_medical": {
+      "section": "past_medical",
+      "type": "text",
+      "text": {
+        "en": "Do you have any long-term illnesses such as diabetes, blood pressure, asthma, heart or kidney disease? Write None if not.",
+        "hi": "क्या आपको मधुमेह, ब्लड प्रेशर, दमा, हृदय या गुर्दे की बीमारी है? नहीं तो None लिखें।"
+      },
+      "next": "q_past_surgical"
+    },
+    "q_past_surgical": {
+      "section": "past_surgical",
+      "type": "text",
+      "text": {
+        "en": "Have you had any surgeries or hospital stays? Write None if not.",
+        "hi": "क्या कोई शल्यक्रिया या अस्पताल में भर्ती हुए हैं? नहीं तो None लिखें।"
+      },
+      "next": "q_drugs"
+    },
+    "q_drugs": {
+      "section": "drug_history",
+      "type": "text",
+      "text": {
+        "en": "List medicines you take now, with dose if you know it. Write None if not.",
+        "hi": "अभी कौन सी दवाइयाँ ले रहे हैं, खुराक सहित। नहीं तो None लिखें।"
+      },
+      "next": "q_allergies"
+    },
+    "q_allergies": {
+      "section": "allergy_history",
+      "type": "text",
+      "text": {
+        "en": "Any medicine, food, or other allergies? Write None if not.",
+        "hi": "किसी दवाई, भोजन या अन्य एलर्जी? नहीं तो None लिखें।"
+      },
+      "next": "q_family"
+    },
+    "q_family": {
+      "section": "family_history",
+      "type": "text",
+      "text": {
+        "en": "Any important illness in parents, siblings, or children (heart disease, diabetes, cancer, TB)?",
+        "hi": "परिवार में कोई महत्वपूर्ण बीमारी (हृदय, मधुमेह, कैंसर, टीबी)?"
+      },
+      "next": "q_personal"
+    },
+    "q_personal": {
+      "section": "personal_history",
+      "type": "text",
+      "text": {
+        "en": "Tell us about diet, sleep, tobacco, alcohol, and daily activity.",
+        "hi": "आहार, नींद, तम्बाकू, शराब और दैनिक गतिविधि के बारे में बताएँ।"
+      },
+      "next": "q_ros"
+    },
+    "q_ros": {
+      "section": "review_of_systems",
+      "type": "choice",
+      "text": {
+        "en": "Besides the main problem, have you noticed any of these?",
+        "hi": "मुख्य समस्या के अलावा इनमें से कुछ है?"
+      },
+      "choices": [
+        {"value": "none", "label": {"en": "No other issues", "hi": "और कोई समस्या नहीं"}},
+        {"value": "weight", "label": {"en": "Weight loss / poor appetite", "hi": "वज़न घटना / भूख कम"}},
+        {"value": "urine", "label": {"en": "Urine problems", "hi": "पेशाब की समस्या"}},
+        {"value": "skin", "label": {"en": "Skin / rash", "hi": "त्वचा / दाने"}},
+        {"value": "mood", "label": {"en": "Low mood / poor sleep", "hi": "उदासी / नींद खराब"}},
+        {"value": "several", "label": {"en": "More than one of these", "hi": "एक से अधिक"}}
+      ],
+      "next": "q_investigations"
+    },
+    "q_investigations": {
+      "section": "prior_investigations",
+      "type": "text",
+      "text": {
+        "en": "Have you done any tests recently (blood, X-ray, ECG, scan)? Summarise if you remember. Write None if not.",
+        "hi": "हाल में कोई जाँच (खून, एक्स-रे, ECG, स्कैन)? याद हो तो लिखें। नहीं तो None लिखें।"
+      },
+      "next": "END"
+    }
+  }
+}

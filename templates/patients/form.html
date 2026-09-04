@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}{% if patient %}Edit patient{% else %}New patient{% endif %} | MediCase{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>{% if patient %}Edit patient{% else %}Register patient{% endif %}</h1>
+        <p>Store basic identification details used on every case sheet.</p>
+    </div>
+</div>
+
+<div class="card panel form-card">
+    <div class="card-body">
+        <form method="post" novalidate>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="full_name">Full name</label>
+                    <input class="form-control" id="full_name" name="full_name" required
+                           value="{{ form.full_name if form else patient.full_name }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" for="age">Age</label>
+                    <input class="form-control" id="age" name="age" type="number" min="0" max="130" required
+                           value="{{ form.age if form else patient.age }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" for="gender">Gender</label>
+                    {% set g = form.gender if form else patient.gender %}
+                    <select class="form-select" id="gender" name="gender" required>
+                        <option value="">Select</option>
+                        <option value="Male" {% if g == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if g == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if g == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="phone">Phone number</label>
+                    <input class="form-control" id="phone" name="phone" required
+                           value="{{ form.phone if form else patient.phone }}">
+                </div>
+                {% if patient %}
+                <div class="col-md-6">
+                    <label class="form-label">Patient ID</label>
+                    <input class="form-control" value="{{ patient.patient_id }}" disabled>
+                </div>
+                {% endif %}
+                <div class="col-md-4">
+                    <label class="form-label" for="date_of_birth">Date of birth</label>
+                    {% set dob = form.date_of_birth if form else (patient.date_of_birth.isoformat() if patient and patient.date_of_birth else '') %}
+                    <input class="form-control" id="date_of_birth" type="date" name="date_of_birth" value="{{ dob }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="preferred_language">Preferred language</label>
+                    {% set lang = form.preferred_language if form else (patient.preferred_language if patient else 'en') %}
+                    <select class="form-select" id="preferred_language" name="preferred_language">
+                        <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
+                        <option value="hi" {% if lang == 'hi' %}selected{% endif %}>Hindi</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="abha_id">ABHA ID (demo)</label>
+                    <input class="form-control" id="abha_id" name="abha_id" value="{{ form.abha_id if form else (patient.abha_id if patient else '') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="emergency_contact_name">Emergency contact</label>
+                    <input class="form-control" id="emergency_contact_name" name="emergency_contact_name" value="{{ form.emergency_contact_name if form else (patient.emergency_contact_name if patient else '') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="emergency_contact_phone">Emergency phone</label>
+                    <input class="form-control" id="emergency_contact_phone" name="emergency_contact_phone" value="{{ form.emergency_contact_phone if form else (patient.emergency_contact_phone if patient else '') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="aadhaar_demo">Aadhaar (DEMO / mock only)</label>
+                    <input class="form-control" id="aadhaar_demo" name="aadhaar_demo" placeholder="Do not store a real Aadhaar in production" value="{{ form.aadhaar_demo if form else (patient.aadhaar_demo if patient else '') }}">
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="address">Address</label>
+                    <textarea class="form-control" id="address" name="address" rows="3" required>{{ form.address if form else patient.address }}</textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <a class="btn btn-outline-secondary" href="{% if patient %}{{ url_for('patients.detail', patient_id=patient.id) }}{% else %}{{ url_for('patients.list_patients') }}{% endif %}">Cancel</a>
+                <button class="btn btn-primary" type="submit">Save patient</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

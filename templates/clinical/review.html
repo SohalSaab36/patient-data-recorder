@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Review summary{% endblock %}
+{% block content %}
+{% if alerts %}
+<div class="alert alert-danger">
+    Predefined red-flag phrases matched. Not a diagnosis.
+    <ul class="mb-0">
+        {% for a in alerts %}
+        <li>{{ a.matched_phrase }} — {{ a.message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% include "clinical/_summary_body.html" %}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Health interview{% endblock %}
+{% block content %}
+<div class="interview-layout">
+    <div class="progress mb-3" role="progressbar" aria-valuenow="{{ session.progress_pct }}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: {{ session.progress_pct }}%">{{ session.progress_pct }}%</div>
+    </div>
+    <div class="chat-log">
+        {% for a in recent %}
+        <div class="bubble sys">{{ a.question_text }}</div>
+        <div class="bubble me">{{ a.answer_text }}</div>
+        {% endfor %}
+        {% if question %}
+        <div class="bubble sys current">
+            <button class="btn btn-sm btn-light tts-btn" type="button" data-tts="{{ question.text|e }}">Hear question</button>
+            <p class="mb-0 mt-2">{{ question.text }}</p>
+            {% if question.help %}<p class="small mb-0">{{ question.help }}</p>{% endif %}
+        </div>
+        {% endif %}
+    </div>
+    {% if session.is_priority %}
+    <div class="alert alert-danger">A predefined urgent phrase was detected. This is not a diagnosis. Seek in-person care if you feel unwell.</div>
+    {% endif %}
+    {% if question %}
+    <form method="post" class="chat-input" id="interviewForm">
+        {% if question.type == 'choice' %}
+        <div class="choice-grid">
+            {% for c in question.choices %}
+            <button class="choice-btn" type="submit" name="choice" value="{{ c.value }}">{{ c.label }}</button>
+            {% endfor %}
+        </div>
+        {% else %}
+        <label class="form-label" for="answer">Your answer</label>
+        <textarea class="form-control" id="answer" name="answer" rows="3" required></textarea>
+        <div class="voice-row">
+            <button class="btn btn-outline-secondary" type="button" id="micBtn">Microphone</button>
+            <span id="voiceStatus" class="small text-muted">Optional voice. You can edit the text before sending.</span>
+        </div>
+        <button class="btn btn-primary mt-2" type="submit">Send answer</button>
+        {% endif %}
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/interview.js') }}" data-lang="{{ speech_lang }}"></script>
+{% endblock %}

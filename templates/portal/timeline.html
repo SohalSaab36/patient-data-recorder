@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Timeline{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Medical timeline</h1>
+        <p>Chronological events from interviews, case sheets, and documents.</p>
+    </div>
+</div>
+<div class="mb-3 d-flex flex-wrap gap-1">
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('portal.timeline') }}">All</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('portal.timeline', type='Prescription') }}">Prescriptions</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('portal.timeline', type='Laboratory Report') }}">Labs</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('portal.timeline', type='Discharge Summary') }}">Discharge</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('portal.timeline', type='case') }}">Cases</a>
+</div>
+<ul class="timeline">
+    {% for ev in events %}
+    <li>
+        <strong>{{ ev.event_date.year }} · {{ ev.event_date }}</strong>
+        <div>{{ ev.event_type }} — {{ ev.title }}</div>
+        {% if ev.document_id %}<a href="{{ url_for('documents.review', document_id=ev.document_id) }}">Original document</a>{% endif %}
+    </li>
+    {% else %}
+    <li>No events yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

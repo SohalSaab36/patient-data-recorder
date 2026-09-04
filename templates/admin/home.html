@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Administration</h1>
+        <p>Users, system counts, and audit log. Prototype operations console.</p>
+    </div>
+</div>
+<div class="row g-3 mb-4">
+    {% for label, value in stats.items() %}
+    <div class="col-md-4 col-xl">
+        <div class="stat-card"><div><span>{{ label.replace('_',' ') }}</span><strong>{{ value }}</strong></div></div>
+    </div>
+    {% endfor %}
+</div>
+<div class="card panel mb-4">
+    <div class="card-body">
+        <h2 class="h5">Users</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead><tr><th>Username</th><th>Role</th><th>Active</th><th></th></tr></thead>
+                <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.role }}</td>
+                    <td>{{ 'Yes' if u.is_active_account else 'No' }}</td>
+                    <td>
+                        {% if u.role != 'admin' %}
+                        <form method="post" action="{{ url_for('admin.toggle_user', user_id=u.id) }}">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit">Enable/disable</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="card panel">
+    <div class="card-body">
+        <h2 class="h5">Audit log</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead><tr><th>When</th><th>User</th><th>Action</th><th>Details</th></tr></thead>
+                <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.created_at }}</td>
+                    <td>{{ log.user.username if log.user else '—' }}</td>
+                    <td>{{ log.action }}</td>
+                    <td>{{ log.details or '' }} {{ log.entity_type or '' }} {{ log.entity_id or '' }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4">No audit rows yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
