@@ -88,7 +88,7 @@ uploads/documents   created at runtime
 ## Installation
 
 ```powershell
-cd "C:\Users\Amritpal\OneDrive\Desktop\patient rec"
+cd "path\patient rec"
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
